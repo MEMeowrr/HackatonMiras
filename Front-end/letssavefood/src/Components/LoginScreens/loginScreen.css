@@ -1,0 +1,161 @@
+.LoginScreen_Container {
+    width: 100vw;
+    height: 100vh;
+    
+    font-family: Poppins;
+
+    background-color: white;
+    color: black;
+
+    overflow: hidden;
+    position: relative;
+}
+
+.LoginScreen_Ellipse {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 120%; /* Adjust the width of the ellipse */
+    height: 100px; /* Adjust the height of the ellipse */
+    background-color: white; /* Set the color of the ellipse */
+    border-radius: 50%; /* Make it elliptical */
+    transform: translate(-50%, -50%); /* Center it exactly */
+    z-index: 2;
+}
+
+.LoginScreen_Image {
+    width: 100vw;
+    height: 50%;
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically (if needed) */
+    z-index: 1;
+}
+
+.LoginScreen_Image img {
+    /* object-fit: contain; */
+    height: 100%;
+}
+
+.LoginScreen_Title {
+    font-size: 2rem;
+    font-weight: 700;
+
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.LoginScreen_Details {
+    position: relative;
+    height: 50%;
+    width: 85%;
+    margin: auto;
+    z-index: 3;
+
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.LoginScreen_TextInput {
+    border: solid 1px black;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: left;
+    opacity: 0.50;
+    margin-bottom: 15px;
+
+    font-weight: bold;
+}
+
+.LoginScreen_Button {
+    background-color: black;
+    color: white;
+    border-radius: 50px;
+    padding: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 1.1rem;
+}
+
+.LoginScreen_Signup_btn {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.LoginScreen_TextInput {
+    border: solid 1px black;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: left;
+    opacity: 0.75;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.LoginScreen_TextInput input {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 10px;
+    font-weight: bold;
+    width: calc(100% - 20px);
+}
+
+.LoginScreen_TextInput input::placeholder {
+    color: #aaa;
+    font-weight: normal;
+}
+
+.LoginScreen_Error {
+    color: red;
+    visibility: hidden;
+}
+
+.SignUpScreen_Image {
+    width: 100vw;
+    height: 30%;
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically (if needed) */
+    z-index: 1;
+}
+
+.SignUpScreen_Image img {
+    height: 100%;
+}
+
+.SignUpScreen_Ellipse {
+    position: absolute;
+    top: 30%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 120%; /* Adjust the width of the ellipse */
+    height: 100px; /* Adjust the height of the ellipse */
+    background-color: white; /* Set the color of the ellipse */
+    border-radius: 50%; /* Make it elliptical */
+    transform: translate(-50%, -50%); /* Center it exactly */
+    z-index: 2;
+}
+
+.SignupScreen_TextInput {
+    border: solid 1px black;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: left;
+    opacity: 0.75;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.SignupScreen_TextInput input {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 10px;
+    font-weight: bold;
+    width: calc(100% - 20px);
+}
+
+.SignupScreen_TextInput input::placeholder {
+    color: #aaa;
+    font-weight: normal;
+}
