@@ -22,3 +22,12 @@ def TestConnection():
     except Exception as e:
         print("❌ Connection failed:", e)
         return False
+    
+def GetAllPoints():
+    conn = GetConnection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM point")
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return result
