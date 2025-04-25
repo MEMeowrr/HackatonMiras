@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Logo from '../../Images/letssavefoodimage.jpeg'
 import axios from 'axios';
 
@@ -11,7 +12,7 @@ const SignupScreen = ({handlePageSwitch}) => {
     const [Nr, setNr] = useState('');
     const [Phone, setPhone] = useState('');
 
-    const handleSignUpButton = () => {
+    const handleSignUpButton = (e) => {
         e.preventDefault(); // Prevent form submission from refreshing the page
 
 

@@ -67,3 +67,44 @@ def InsertUser(name, email, password, address, phone_number):
         conn.close()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+
+def ValidateLogin(email, password):
+    try:
+        conn = GetConnection()
+        cursor = conn.cursor()
+
+        # Fetch user with matching email
+        cursor.execute("SELECT password FROM user WHERE email = %s", (email,))
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if result and result[0] == password:
+            return True
+        else:
+            return False
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
+    
+def UpdateUserType(email, user_type):
+    try:
+        conn = GetConnection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            UPDATE user SET type = %s WHERE email = %s
+        """, (user_type, email))
+
+        conn.commit()
+        updated_rows = cursor.rowcount
+        cursor.close()
+        conn.close()
+
+        return updated_rows > 0
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
