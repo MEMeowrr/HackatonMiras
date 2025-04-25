@@ -31,3 +31,39 @@ def GetAllPoints():
     cursor.close()
     conn.close()
     return result
+
+def InsertEvent(event_type, creationdate, expectedtime, couriers, completed, foodId):
+    try:
+        conn = GetConnection()
+        cursor = conn.cursor()
+
+        # SQL query to insert an event
+        cursor.execute("""
+            INSERT INTO event (type, creationdate, expectedtime, couriers, completed, foodId)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (event_type, creationdate, expectedtime, couriers, completed, foodId))
+
+        # Commit changes
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+def InsertUser(name, email, password, address, phone_number):
+    try:
+        conn = GetConnection()
+        cursor = conn.cursor()
+
+        # SQL query to insert the user
+        cursor.execute("""
+            INSERT INTO user (name, email, password, address, phone_number)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (name, email, password, address, phone_number))
+
+        # Commit changes
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
