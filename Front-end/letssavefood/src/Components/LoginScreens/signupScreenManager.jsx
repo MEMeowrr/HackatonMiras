@@ -16,15 +16,17 @@ const SignupScreenManager = ({handlePageSwitch}) => {
 
     useEffect(() => {
         if (indexer >= 3) {
+
+            console.log(user)
             //send api call
             axios.post('http://localhost:5000/signup', {
                 "email": user.email,
                 "password": user.password,
-                "firstName": user.FirstName,
-                "lastName": user.LastName,
-                "streetName": user.Address,
-                "streetNumber": user.Nr,
-                "phoneNumber": user.Phone,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "streetName": user.streetName,
+                "streetNumber": user.streetNumber,
+                "phoneNumber": user.phoneNumber,
                 "type": user.type,
                 "location": user.location
             })
