@@ -1,0 +1,23 @@
+.Signup_Card_Container {
+    /* width: 80%; */
+    height: 150px;
+    border: solid 2px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+
+    margin-bottom: 10px;
+
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.SignUpScreen_Welcome {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.SignUpScreen_Description {
+    font-size: 1.4rem;
+    opacity: 0.50;
+    font-weight: bold;
+    margin-bottom: 10px;
+}

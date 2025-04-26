@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import Logo from '../../Images/letssavefoodimage.jpeg'
 import axios from 'axios';
 
-const SignupScreen = ({handlePageSwitch}) => {
+const SignupScreen = ({handlePageSwitch, increasesignup}) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -11,26 +12,38 @@ const SignupScreen = ({handlePageSwitch}) => {
     const [Nr, setNr] = useState('');
     const [Phone, setPhone] = useState('');
 
-    const handleSignUpButton = () => {
+    const handleSignUpButton = (e) => {
         e.preventDefault(); // Prevent form submission from refreshing the page
 
+        const user = {
+            'email': email,
+            'password': password,
+            'firstName': FirstName,
+            'lastName': LastName,
+            'streetName': Address,
+            'streetNumber': Nr,
+            'phoneNumber': Phone
+        }
+
+        increasesignup(user)
 
         //make api call
-        axios.post('http://localhost:5000/signup', {
-            email: email,
-            password: password,
-            firstName: FirstName,
-            lastName: LastName,
-            streetName: Address,
-            streetNumber: Nr,
-            phoneNumber: Phone
-        })
-        .then(response => {
-            console.log(response) // Set the user data from the API
-        })
-        .catch(error => {
-            console.error('There was an error fetching the data:', error);
-        });
+        // axios.post('http://localhost:5000/signup', {
+        //     email: email,
+        //     password: password,
+        //     firstName: FirstName,
+        //     lastName: LastName,
+        //     streetName: Address,
+        //     streetNumber: Nr,
+        //     phoneNumber: Phone
+        // })
+        // .then(response => {
+        //     console.log(response) // Set the user data from the API
+            
+        // })
+        // .catch(error => {
+        //     console.error('There was an error fetching the data:', error);
+        // });
     }
 
     return (
