@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Logo from '../../Images/letssavefoodimage.jpeg'
-import axios from 'axios';
 
 const SignupScreen = ({handlePageSwitch, increasesignup}) => {
 
@@ -26,24 +25,6 @@ const SignupScreen = ({handlePageSwitch, increasesignup}) => {
         }
 
         increasesignup(user)
-
-        //make api call
-        // axios.post('http://localhost:5000/signup', {
-        //     email: email,
-        //     password: password,
-        //     firstName: FirstName,
-        //     lastName: LastName,
-        //     streetName: Address,
-        //     streetNumber: Nr,
-        //     phoneNumber: Phone
-        // })
-        // .then(response => {
-        //     console.log(response) // Set the user data from the API
-            
-        // })
-        // .catch(error => {
-        //     console.error('There was an error fetching the data:', error);
-        // });
     }
 
     return (

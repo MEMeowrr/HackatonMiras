@@ -8,6 +8,12 @@
 
     display: flex;
     flex-flow: row nowrap;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.Signup_Card_Container.selected {
+    border-color: darkblue; /* light blue */
+    background-color: #d0ebff;
 }
 
 .SignUpScreen_Welcome {
@@ -20,4 +26,17 @@
     opacity: 0.50;
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+.SignUpScreen_Location {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    width: fit-content;
+    padding: 10px 20px;
+    border-radius: 10px;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.SignUpScreen_Location.selected {
+    border-color: darkblue; /* light blue */
+    background-color: #d0ebff;
 }

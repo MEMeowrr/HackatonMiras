@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignupScreen from "./signupScreen"
 import SignupScreenType from "./signupScreenType";
-
+import SignupScreenLocation from "./signupScreenLocation";
+import axios from 'axios';
 
 const SignupScreenManager = ({handlePageSwitch}) => {
 
@@ -13,6 +14,29 @@ const SignupScreenManager = ({handlePageSwitch}) => {
         setUser(userObject)
     }
 
+    useEffect(() => {
+        if (indexer >= 2) {
+            //send api call
+            axios.post('http://localhost:5000/signup', {
+                email: user.email,
+                password: user.password,
+                firstName: user.FirstName,
+                lastName: user.LastName,
+                streetName: user.Address,
+                streetNumber: user.Nr,
+                phoneNumber: user.Phone,
+                type: user.type,
+                location: user.location
+            })
+            .then(response => {
+                console.log(response) // Set the user data from the API
+            })
+            .catch(error => {
+                console.error('There was an error fetching the data:', error);
+            });
+        }
+    }, [indexer])
+
     return (
         <>
             {indexer == 0 ? 
@@ -21,7 +45,7 @@ const SignupScreenManager = ({handlePageSwitch}) => {
                 indexer == 1 ?
                     <SignupScreenType user={user} increasesignup={increasesignup}/> 
                     : 
-                    <div>screen 3</div>
+                    <SignupScreenLocation user={user} increasesignup={increasesignup}/>
             }
             
         </>
