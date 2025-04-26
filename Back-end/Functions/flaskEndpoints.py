@@ -70,7 +70,7 @@ def login():
         if sqlConnectionHelper.ValidateLogin(email, password):
             return jsonify({"success": True}), 200
         else:
-            return jsonify({"success": False}), 401
+            return jsonify({"success": False}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
