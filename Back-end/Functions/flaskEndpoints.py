@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 import sqlConnectionHelper  # Import your custom database helper file
+from flask_cors import CORS  # <-- Import it
 
 app = Flask(__name__)
+
+CORS(app, origins=["http://localhost:3000"])
 
 # Endpoint to insert an event
 @app.route('/insert_event', methods=['POST'])
@@ -51,6 +54,43 @@ def signup():
         sqlConnectionHelper.InsertUser(name, email, password, address, phone_number)
 
         return jsonify({"message": "User signed up successfully!"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        # Check if the user exists and the password matches
+        if sqlConnectionHelper.ValidateLogin(email, password):
+            return jsonify({"success": True}), 200
+        else:
+            return jsonify({"success": False}), 401
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/set_user_type', methods=['POST'])
+def set_user_type():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        user_type = data.get('type')
+
+        if not email or not user_type:
+            return jsonify({"error": "Missing email or type"}), 400
+
+        # Call helper function to update type
+        success = sqlConnectionHelper.UpdateUserType(email, user_type)
+
+        if success:
+            return jsonify({"message": "User type updated successfully"}), 200
+        else:
+            return jsonify({"error": "User not found or failed to update"}), 404
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
