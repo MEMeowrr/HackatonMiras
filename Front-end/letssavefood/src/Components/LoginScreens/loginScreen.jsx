@@ -21,14 +21,17 @@ const LoginScreen = ({handlePageSwitch, info}) => {
         })
         .then(response => {
             console.log(response) // Set the user data from the API
+            if (response.data.success) {
+                //navigate furthur
+                console.log("login successfull")
+            } else {
+                setInvalidCreds(true)
+            }
         })
         .catch(error => {
             console.error('There was an error fetching the data:', error);
         });
-
-        //check if correct then navigate to dashboard
-        //else
-        setInvalidCreds(true)
+    
     }
 
     return (
