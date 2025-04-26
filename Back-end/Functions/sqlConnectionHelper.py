@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 import mysql.connector
+import random
 
 load_dotenv() #load .env information
 
@@ -32,16 +33,16 @@ def GetAllPoints():
     conn.close()
     return result
 
-def InsertEvent(event_type, creationdate, expectedtime, couriers, completed, foodId):
+def InsertEvent(event_type, creationdate, expectedtime, couriers, completed, foodId, vehicleId):
     try:
         conn = GetConnection()
         cursor = conn.cursor()
 
         # SQL query to insert an event
         cursor.execute("""
-            INSERT INTO event (type, creationdate, expectedtime, couriers, completed, foodId)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (event_type, creationdate, expectedtime, couriers, completed, foodId))
+            INSERT INTO event (type, creationdate, expectedtime, couriers, completed, foodId, vehicleId)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (event_type, creationdate, expectedtime, couriers, completed, foodId, vehicleId))
 
         # Commit changes
         conn.commit()
@@ -50,16 +51,16 @@ def InsertEvent(event_type, creationdate, expectedtime, couriers, completed, foo
     except mysql.connector.Error as err:
         print(f"Error: {err}")
 
-def InsertUser(name, email, password, address, phone_number):
+def InsertUser(name, email, password, address, phone_number, center_id):
     try:
         conn = GetConnection()
         cursor = conn.cursor()
 
         # SQL query to insert the user
         cursor.execute("""
-            INSERT INTO user (name, email, password, address, phone_number)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (name, email, password, address, phone_number))
+            INSERT INTO user (name, email, password, address, phone_number, centerId)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (name, email, password, address, phone_number, center_id))
 
         # Commit changes
         conn.commit()
@@ -211,6 +212,121 @@ def ReturnVehicleFromUser(user_id, distribution_center_id):
     except Exception as e:
         print(f"Return error: {e}")
         return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def GetAvailableEventsByDistributionCenter(user_id):
+    conn = GetConnection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        # Fetch food info
+        cursor.execute("SELECT foodId, name FROM food")
+        foods = cursor.fetchall()
+        food_map = {food['foodId']: food['name'] for food in foods}
+
+        # Get user's center and vehicle
+        cursor.execute("""
+            SELECT u.centerId, u.vehicleId
+            FROM user u
+            WHERE u.userId = %s
+        """, (user_id,))
+        user_info = cursor.fetchone()
+        print("User Info:", user_info)
+
+        if not user_info or not user_info['centerId']:
+            return []
+
+        center_id = user_info['centerId']
+        user_vehicle_id = user_info['vehicleId']
+
+        # Get all unassigned events
+        cursor.execute("""
+            SELECT e.eventId, e.address, e.type, e.foodId, e.vehicleId AS requiredVehicleId, v.type AS requiredVehicleType, e.centerId AS eventCenterId
+            FROM event e
+            JOIN vehicles v ON e.vehicleId = v.vehicleId
+            WHERE e.userId IS NULL
+        """)
+        events = cursor.fetchall()
+        print("Events:", events)
+
+        available_events = []
+        unavailable_events = []
+
+        for event in events:
+            required_vehicle_id = event['requiredVehicleId']
+            event_center_id = event['eventCenterId']
+
+            # Skip if not same center
+            if event_center_id != center_id:
+                print(f"Event {event['eventId']} skipped (wrong center)")
+                continue
+
+            food_name = food_map.get(event['foodId'], "Unknown")
+            event_data = {
+                'eventId': event['eventId'],
+                'eventAddress': event['address'],
+                'type': event['type'],
+                'food': food_name,
+                'quantity': random.randint(1, 30),
+                'vehicleType': event['requiredVehicleType'],
+            }
+
+            has_correct_vehicle = False
+            needs_new_vehicle = False
+
+            # FIRST: check if user has correct vehicle
+            if user_vehicle_id == required_vehicle_id:
+                has_correct_vehicle = True
+            elif required_vehicle_id == 3 and user_vehicle_id == 2:
+                # Special case: Big (2) can do Small (3)
+                has_correct_vehicle = True
+            else:
+                has_correct_vehicle = False
+
+            if has_correct_vehicle:
+                event_data['requiresNewVehicle'] = False
+                available_events.append(event_data)
+                print(f"Event {event['eventId']} available (user vehicle matches)")
+                continue  # No need to check center if user vehicle matches
+
+            # SECOND: check if center has correct vehicle
+            # First check exact match
+            cursor.execute("""
+                SELECT quantity FROM distributioncenter_vehicles
+                WHERE centerId = %s AND vehicleId = %s
+            """, (center_id, required_vehicle_id))
+            vehicle_info = cursor.fetchone()
+
+            if vehicle_info and vehicle_info['quantity'] > 0:
+                needs_new_vehicle = True
+            elif required_vehicle_id == 3:
+                # Special case: check if Big available for Small
+                cursor.execute("""
+                    SELECT quantity FROM distributioncenter_vehicles
+                    WHERE centerId = %s AND vehicleId = 2
+                """, (center_id,))
+                big_vehicle_info = cursor.fetchone()
+                if big_vehicle_info and big_vehicle_info['quantity'] > 0:
+                    needs_new_vehicle = True
+
+            if needs_new_vehicle:
+                event_data['requiresNewVehicle'] = True
+                available_events.append(event_data)
+                print(f"Event {event['eventId']} available (needs new vehicle)")
+            else:
+                unavailable_events.append(event_data)
+                print(f"Event {event['eventId']} unavailable (no vehicle match)")
+
+        print("Available Events:", available_events)
+        print("Unavailable Events:", unavailable_events)
+
+        return {'availableEvents': available_events, 'unavailableEvents': unavailable_events}
+
+    except Exception as e:
+        print(f"GetAvailableEventsByDistributionCenter error: {e}")
+        return []
     finally:
         cursor.close()
         conn.close()

@@ -19,9 +19,10 @@ def insert_event():
         couriers = data.get('couriers')
         completed = data.get('completed')
         foodId = data.get('foodId')
+        vehicleId = data.get('vehicleId')
 
         # Call your insert_event function from sqlConnectionHelper
-        sqlConnectionHelper.InsertEvent(event_type, creationdate, expectedtime, couriers, completed, foodId)
+        sqlConnectionHelper.InsertEvent(event_type, creationdate, expectedtime, couriers, completed, foodId, vehicleId)
 
         return jsonify({"message": "Event inserted successfully!"}), 200
 
@@ -36,7 +37,7 @@ def signup():
         data = request.get_json()
 
         # Extract the user details from the request
-        first_name = data.get('FirstName')
+        first_name = data.get('firstName')
         last_name = data.get('lastName')
         email = data.get('email')
         password = data.get('password')
@@ -44,6 +45,7 @@ def signup():
         street_number = data.get('streetNumber')
         phone_number = data.get('phoneNumber')
         user_type = data.get('type')
+        center_id = data.get('centerId')
         # Combine first and last name into one column
     
         name = f"{first_name} {last_name}"
@@ -52,7 +54,7 @@ def signup():
         address = f"{street_name} {street_number}"
 
         # Call your insert_user function from sqlConnectionHelper to save the user to the database
-        sqlConnectionHelper.InsertUser(name, email, password, address, phone_number)
+        sqlConnectionHelper.InsertUser(name, email, password, address, phone_number, center_id)
         sqlConnectionHelper.UpdateUserType(email, user_type)
 
         return jsonify({"message": "User signed up successfully!"}), 200
@@ -143,6 +145,23 @@ def return_vehicle():
             return jsonify({"message": "User has no vehicle to return"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@app.route('/get_orders_by_center', methods=['POST'])
+def get_available_events():
+    try:
+        data = request.get_json()
+        user_id = data.get('userId')
+
+        if not user_id:
+            return jsonify({"error": "Missing userId"}), 400
+
+        available_events = sqlConnectionHelper.GetAvailableEventsByDistributionCenter(user_id)
+
+        return jsonify({"availableEvents": available_events}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 if __name__ == '__main__':
     app.run(debug=True)
