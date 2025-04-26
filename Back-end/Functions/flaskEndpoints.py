@@ -43,7 +43,7 @@ def signup():
         street_name = data.get('streetName')
         street_number = data.get('streetNumber')
         phone_number = data.get('phoneNumber')
-
+        user_type = data.get('type')
         # Combine first and last name into one column
         name = f"{first_name} {last_name}"
 
@@ -51,7 +51,8 @@ def signup():
         address = f"{street_name} {street_number}"
 
         # Call your insert_user function from sqlConnectionHelper to save the user to the database
-        sqlConnectionHelper.InsertUser(name, email, password, address, phone_number)
+        sqlConnectionHelper.InsertUser(first_name, email, password, street_name, phone_number)
+        sqlConnectionHelper.UpdateUserType(email, user_type)
 
         return jsonify({"message": "User signed up successfully!"}), 200
 
