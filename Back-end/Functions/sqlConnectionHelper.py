@@ -104,7 +104,113 @@ def UpdateUserType(email, user_type):
         conn.close()
 
         return updated_rows > 0
-
+    
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+        return []
+    
+    
+def GetEventsByUserId(user_id):
+    try:
+        conn = GetConnection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT * FROM event WHERE userId = %s
+        """, (user_id,))
+
+        result = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        return result
+    
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return []
+    
+def AssignVehicleToUser(user_id, vehicle_id, distribution_center_id):
+    conn = GetConnection()
+    cursor = conn.cursor()
+    try:
+        # Check availability
+        cursor.execute("""
+            SELECT quantity FROM distributioncenter_vehicles 
+            WHERE centerId = %s AND vehicleId = %s
+        """, (distribution_center_id, vehicle_id))
+        result = cursor.fetchone()
+
+        if not result or result[0] <= 0:
+            return False  # No vehicles available
+
+        # Assign vehicle to user
+        cursor.execute("UPDATE user SET vehicleId = %s WHERE userId = %s", (vehicle_id, user_id))
+
+        # Update or delete the row in distributioncenter_vehicles
+        if result[0] == 1:
+            cursor.execute("""
+                DELETE FROM distributioncenter_vehicles 
+                WHERE centerId = %s AND vehicleId = %s
+            """, (distribution_center_id, vehicle_id))
+        else:
+            cursor.execute("""
+                UPDATE distributioncenter_vehicles 
+                SET quantity = quantity - 1 
+                WHERE centerId = %s AND vehicleId = %s
+            """, (distribution_center_id, vehicle_id))
+
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Assign error: {e}")
         return False
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def ReturnVehicleFromUser(user_id, distribution_center_id):
+    conn = GetConnection()
+    cursor = conn.cursor()
+    try:
+        # Check if the user has a vehicle
+        cursor.execute("SELECT vehicleId FROM user WHERE userId = %s", (user_id,))
+        result = cursor.fetchone()
+        
+        if not result or result[0] is None:
+            return False  # User has no vehicle to return
+
+        vehicle_id = result[0]
+
+        # Remove the vehicle from the user
+        cursor.execute("UPDATE user SET vehicleId = NULL WHERE userId = %s", (user_id,))
+
+        # Check if the vehicle already exists at the distribution center
+        cursor.execute("""
+            SELECT quantity FROM distributioncenter_vehicles 
+            WHERE centerId = %s AND vehicleId = %s
+        """, (distribution_center_id, vehicle_id))
+        existing = cursor.fetchone()
+
+        if existing:
+            # Increment quantity
+            cursor.execute("""
+                UPDATE distributioncenter_vehicles 
+                SET quantity = quantity + 1 
+                WHERE centerId = %s AND vehicleId = %s
+            """, (distribution_center_id, vehicle_id))
+        else:
+            # Add new row
+            cursor.execute("""
+                INSERT INTO distributioncenter_vehicles (centerId, vehicleId, quantity)
+                VALUES (%s, %s, 1)
+            """, (distribution_center_id, vehicle_id))
+
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Return error: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
