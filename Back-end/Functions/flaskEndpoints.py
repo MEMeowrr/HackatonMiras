@@ -36,7 +36,7 @@ def signup():
         data = request.get_json()
 
         # Extract the user details from the request
-        first_name = data.get('firstName')
+        first_name = data.get('FirstName')
         last_name = data.get('lastName')
         email = data.get('email')
         password = data.get('password')
@@ -45,6 +45,7 @@ def signup():
         phone_number = data.get('phoneNumber')
         user_type = data.get('type')
         # Combine first and last name into one column
+    
         name = f"{first_name} {last_name}"
 
         # Combine street name and street number into one address column
