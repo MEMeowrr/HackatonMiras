@@ -95,5 +95,52 @@ def set_user_type():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+@app.route('/get_orders_by_id', methods=['POST'])
+def get_orders_by_id():
+    try:
+        data = request.get_json()
+        user_id = data.get('userId')
+
+        if not user_id:
+            return jsonify({"error": "No userId provided"}), 400
+
+        events = sqlConnectionHelper.GetEventsByUserId(user_id)
+
+        return jsonify({"events": events}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route('/assign_vehicle', methods=['POST'])
+def assign_vehicle():
+    try:
+        data = request.get_json()
+        user_id = data.get('userId')
+        vehicle_id = data.get('vehicleId')
+        distribution_center_id = data.get('distributionCenterId')
+
+        success = sqlConnectionHelper.AssignVehicleToUser(user_id, vehicle_id, distribution_center_id)
+        if success:
+            return jsonify({"message": "Vehicle assigned successfully"}), 200
+        else:
+            return jsonify({"message": "No vehicles available"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route('/return_vehicle', methods=['POST'])
+def return_vehicle():
+    try:
+        data = request.get_json()
+        user_id = data.get('userId')
+        distribution_center_id = data.get('distributionCenterId')
+
+        success = sqlConnectionHelper.ReturnVehicleFromUser(user_id, distribution_center_id)
+        if success:
+            return jsonify({"message": "Vehicle returned successfully"}), 200
+        else:
+            return jsonify({"message": "User has no vehicle to return"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 if __name__ == '__main__':
     app.run(debug=True)
