@@ -4,7 +4,7 @@ import LoginScreen from "./LoginScreens/loginScreen";
 import SignupScreenManager from "./LoginScreens/signupScreenManager";
 
 
-const LoginManager = () => {
+const LoginManager = ({switchToDashboard}) => {
 
     const [isLoggingIn, SetIsLoggingIn] = useState(true);
     const [info, setInfo] = useState("")
@@ -23,7 +23,7 @@ const LoginManager = () => {
     return (
         <div>
             {isLoggingIn ? 
-                <LoginScreen handlePageSwitch={handlePageSwitch} info={info}/> :
+                <LoginScreen handlePageSwitch={handlePageSwitch} switchToDashboard={switchToDashboard} info={info}/> :
                 <SignupScreenManager handlePageSwitch={handlePageSwitch}/>
             }
         </div>

@@ -3,7 +3,7 @@ import Logo from '../../Images/letssavefoodimage.jpeg'
 import { useState } from 'react'
 import axios from 'axios';
 
-const LoginScreen = ({handlePageSwitch, info}) => {
+const LoginScreen = ({handlePageSwitch, info, switchToDashboard}) => {
 
     const [invalidCreds, setInvalidCreds] = useState(false)
 
@@ -23,7 +23,7 @@ const LoginScreen = ({handlePageSwitch, info}) => {
             console.log(response) // Set the user data from the API
             if (response.data.success) {
                 //navigate furthur
-                console.log("login successfull")
+                switchToDashboard();
             } else {
                 setInvalidCreds(true)
             }
