@@ -18,15 +18,15 @@ const SignupScreenManager = ({handlePageSwitch}) => {
         if (indexer >= 3) {
             //send api call
             axios.post('http://localhost:5000/signup', {
-                email: user.email,
-                password: user.password,
-                firstName: user.FirstName,
-                lastName: user.LastName,
-                streetName: user.Address,
-                streetNumber: user.Nr,
-                phoneNumber: user.Phone,
-                type: user.type,
-                location: user.location
+                "email": user.email,
+                "password": user.password,
+                "firstName": user.FirstName,
+                "lastName": user.LastName,
+                "streetName": user.Address,
+                "streetNumber": user.Nr,
+                "phoneNumber": user.Phone,
+                "type": user.type,
+                "location": user.location
             })
             .then(response => {
                 console.log(response) // Set the user data from the API
