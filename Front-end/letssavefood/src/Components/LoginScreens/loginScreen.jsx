@@ -1,14 +1,34 @@
 import './loginScreen.css'
 import Logo from '../../Images/letssavefoodimage.jpeg'
 import { useState } from 'react'
+import axios from 'axios';
 
-const LoginScreen = ({handlePageSwitch}) => {
+const LoginScreen = ({handlePageSwitch, info}) => {
 
     const [invalidCreds, setInvalidCreds] = useState(false)
 
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
     const handleLoginButton = () => {
         console.log("button pressed")
-        setInvalidCreds(true);
+
+        //make login api call
+
+        axios.post('http://localhost:5000/login', {
+            email: email,
+            password: password,
+        })
+        .then(response => {
+            console.log(response) // Set the user data from the API
+        })
+        .catch(error => {
+            console.error('There was an error fetching the data:', error);
+        });
+
+        //check if correct then navigate to dashboard
+        //else
+        setInvalidCreds(true)
     }
 
     return (
@@ -21,13 +41,14 @@ const LoginScreen = ({handlePageSwitch}) => {
                 <div className='LoginScreen_Title'>Login</div>
                 <div>
                     <div className='LoginScreen_TextInput'>
-                        <input type="email" placeholder="Email" />
+                        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                     </div>
                     <div className='LoginScreen_TextInput'>
-                        <input type="password" placeholder="Password" />
+                        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                     </div>
                 </div>
-                <div className='LoginScreen_Error' style={invalidCreds ? {visibility: 'visible'} : {visibility: 'hidden'}}>Invalid credentials</div>
+                <div style={info != "" && !invalidCreds ? {display: 'block', color: 'green'} : {display: 'none'}}>{info}</div>
+                <div style={invalidCreds ? {display: 'block', color: 'red'} : {display: 'none'}}>Invalid credentials</div>
                 <div className='LoginScreen_Button' onClick={handleLoginButton}>Login</div>
                 <div className='LoginScreen_Signup'>don't have an account? <span className='LoginScreen_Signup_btn' onClick={() => handlePageSwitch('signup')}>Sign up</span></div>
             </div>

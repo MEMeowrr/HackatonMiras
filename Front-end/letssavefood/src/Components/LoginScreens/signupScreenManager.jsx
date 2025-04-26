@@ -15,7 +15,7 @@ const SignupScreenManager = ({handlePageSwitch}) => {
     }
 
     useEffect(() => {
-        if (indexer >= 2) {
+        if (indexer >= 3) {
             //send api call
             axios.post('http://localhost:5000/signup', {
                 email: user.email,
@@ -34,6 +34,8 @@ const SignupScreenManager = ({handlePageSwitch}) => {
             .catch(error => {
                 console.error('There was an error fetching the data:', error);
             });
+
+            handlePageSwitch('login', "Welcome to the team!")
         }
     }, [indexer])
 

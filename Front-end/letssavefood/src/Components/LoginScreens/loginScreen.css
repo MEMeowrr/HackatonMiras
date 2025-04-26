@@ -106,11 +106,6 @@
     font-weight: normal;
 }
 
-.LoginScreen_Error {
-    color: red;
-    visibility: hidden;
-}
-
 .SignUpScreen_Image {
     width: 100vw;
     height: 30%;
