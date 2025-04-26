@@ -51,7 +51,7 @@ def signup():
         address = f"{street_name} {street_number}"
 
         # Call your insert_user function from sqlConnectionHelper to save the user to the database
-        sqlConnectionHelper.InsertUser(first_name, email, password, street_name, phone_number)
+        sqlConnectionHelper.InsertUser(name, email, password, address, phone_number)
         sqlConnectionHelper.UpdateUserType(email, user_type)
 
         return jsonify({"message": "User signed up successfully!"}), 200
